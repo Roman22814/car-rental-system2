@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Rental System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    .car-list {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+    .car {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .car img {
+      width: 100%;
+      max-width: 200px;
+    }
+    .booking-form,
+    .payment-form,
+    .invoice {
+      margin: 20px auto;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+    }
+    .booking-form.active,
+    .payment-form.active,
+    .invoice.active {
+      display: block;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    input, select, button {
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Car Rental System</h1>
+</header>
+
+<section class="car-list">
+  <div class="car">
+    <img src="https://via.placeholder.com/200" alt="Car 1">
+    <h2>Honda Civic</h2>
+    <p>₹2500/day</p>
+    <button onclick="bookCar('Honda Civic', 2500)">Book Now</button>
+  </div>
+  <div class="car">
+    <img src="https://via.placeholder.com/200" alt="Car 2">
+    <h2>Toyota Innova</h2>
+    <p>₹3500/day</p>
+    <button onclick="bookCar('Toyota Innova', 3500)">Book Now</button>
+  </div>
+</section>
+
+<section class="booking-form active" id="booking-form">
+  <h2>Book a Car</h2>
+  <form id="form">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="text" id="car-name" placeholder="Car Name" readonly required>
+    <input type="hidden" id="car-rate">
+    <input type="date" id="date" required>
+    <input type="number" id="days" placeholder="Number of Days" min="1" required>
+    <button type="submit">Continue to Payment</button>
+  </form>
+</section>
+
+<section class="payment-form" id="payment-form">
+  <h2>Select Payment Method</h2>
+  <form id="paymentForm">
+    <select id="payment-method" required>
+      <option value="">--Select Payment Method--</option>
+      <option value="Credit Card">Credit Card</option>
+      <option value="UPI">UPI</option>
+      <option value="Net Banking">Net Banking</option>
+      <option value="Cash on Delivery">Cash on Delivery</option>
+    </select>
+    <button type="submit">Generate Invoice</button>
+  </form>
+</section>
+
+<section class="invoice" id="invoice">
+  <h2>Invoice</h2>
+  <p><strong>Name:</strong> <span id="inv-name"></span></p>
+  <p><strong>Car:</strong> <span id="inv-car"></span></p>
+  <p><strong>Date:</strong> <span id="inv-date"></span></p>
+  <p><strong>Days:</strong> <span id="inv-days"></span></p>
+  <p><strong>Rate:</strong> ₹<span id="inv-rate"></span>/day</p>
+  <p><strong>Total:</strong> ₹<span id="inv-total"></span></p>
+  <p><strong>Payment Method:</strong> <span id="inv-payment"></span></p>
+  <h3>Thank you for your booking!</h3>
+</section>
+
+<script>
+  let bookingData = {};
+
+  function bookCar(carName, rate) {
+    document.getElementById('car-name').value = carName;
+    document.getElementById('car-rate').value = rate;
+    document.getElementById('booking-form').classList.add('active');
+    document.getElementById('payment-form').classList.remove('active');
+    document.getElementById('invoice').classList.remove('active');
+    document.getElementById('booking-form').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  document.getElementById('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    bookingData.name = document.getElementById('name').value;
+    bookingData.car = document.getElementById('car-name').value;
+    bookingData.date = document.getElementById('date').value;
+    bookingData.days = parseInt(document.getElementById('days').value);
+    bookingData.rate = parseInt(document.getElementById('car-rate').value);
+
+    document.getElementById('booking-form').classList.remove('active');
+    document.getElementById('payment-form').classList.add('active');
+    document.getElementById('payment-form').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.getElementById('paymentForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const paymentMethod = document.getElementById('payment-method').value;
+    if (!paymentMethod) return;
+
+    bookingData.payment = paymentMethod;
+    const total = bookingData.days * bookingData.rate;
+
+    document.getElementById('inv-name').textContent = bookingData.name;
+    document.getElementById('inv-car').textContent = bookingData.car;
+    document.getElementById('inv-date').textContent = bookingData.date;
+    document.getElementById('inv-days').textContent = bookingData.days;
+    document.getElementById('inv-rate').textContent = bookingData.rate;
+    document.getElementById('inv-total').textContent = total;
+    document.getElementById('inv-payment').textContent = paymentMethod;
+
+    document.getElementById('payment-form').classList.remove('active');
+    document.getElementById('invoice').classList.add('active');
+    document.getElementById('invoice').scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>
